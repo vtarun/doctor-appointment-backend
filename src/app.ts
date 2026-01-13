@@ -1,6 +1,8 @@
 import express from 'express';
 import { errorHandler } from './middlewares/errorHandler';
 
+import userRoutes from './routes/user.routes';
+
 const app = express();
 
 app.use(express.json());
@@ -8,6 +10,8 @@ app.use(express.json());
 app.get('/health', (req, res)=>{
 	res.status(200).json({status: "ok"});
 });
+
+app.use('/users', userRoutes);
 
 app.use((_req, _res, next)=>{
 	next(new Error('Route not found.'));
