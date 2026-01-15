@@ -19,6 +19,7 @@
   "homepage": "https://github.com/vtarun/doctor-appointment-backend#readme",
   "dependencies": {
     "express": "^5.2.1",
+    "mongoose": "^9.1.3",
     "zod": "^4.3.5"
   },
   "devDependencies": {
