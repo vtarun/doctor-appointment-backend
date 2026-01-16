@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
 export const getUserParamsSchema = z.object({
 	params: z.object({
-    	id: z.string().min(1, 'User id is required')
+    	id: z.string().regex(objectIdRegex, 'Invalid user id')
   	})
 });

@@ -4,7 +4,7 @@ import { userService } from '../services/user.service';
 
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-	const user = await userService.getById(req.params.id);
+	const user = await userService.getById(req.params.id as string);
 	res.status(200).json(user);
 });
 
