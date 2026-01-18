@@ -2,6 +2,7 @@ import express from 'express';
 import { errorHandler } from './middlewares/errorHandler';
 
 import userRoutes from './routes/user.routes';
+import authRoutes from './routes/auth.routes';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.get('/health', (req, res)=>{
 });
 
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 app.use((_req, _res, next)=>{
 	next(new Error('Route not found.'));
