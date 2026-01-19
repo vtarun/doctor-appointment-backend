@@ -14,6 +14,9 @@ app.get('/health', (req, res)=>{
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
+app.use('/doctors', doctorRoutes);
+app.use('/admin', adminRoutes);
+
 
 app.use((_req, _res, next)=>{
 	next(new Error('Route not found.'));
