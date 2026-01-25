@@ -16,5 +16,9 @@ export const doctorRepository = {
 
     async getVerifiedDoctorById(doctorId: string){
         return DoctorModel.findOne({_id: doctorId, verificationStatus: 'VERIFIED'} ).populate('userId', 'name email').lean();
+    },
+
+    async updateStatus(doctorId: string, status: string){
+        return DoctorModel.findByIdAndUpdate(doctorId, {verificationStatus: status}, {new : true}).lean();
     }
 }

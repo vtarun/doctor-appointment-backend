@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { timeStamp } from "node:console";
+// import { timeStamp } from "node:console";
 
 const doctorSchema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true},

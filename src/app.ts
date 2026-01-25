@@ -3,6 +3,8 @@ import { errorHandler } from './middlewares/errorHandler';
 
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
+import doctorRoutes from './routes/doctor.routes';
+import adminRoutes from './routes/admin.routes';
 
 const app = express();
 

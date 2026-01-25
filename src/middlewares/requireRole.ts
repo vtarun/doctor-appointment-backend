@@ -5,7 +5,7 @@ import { AppError } from "../utils/appError";
 
 export function requireRoles(allowedRoles: Role[]){
     return (req: AuthRequest, _res: Response, next: NextFunction) => {
-        if(!allowedRoles.includes(req.user.role)){
+        if(!allowedRoles.includes(req?.user?.role as Role)){
             throw new AppError('Forbidden', 403);
         }
         next();
