@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/requireAuth';
-import { getDoctorById, getListOfDoctors } from '../controllers/doctor.controller';
+import { createDoctorProfile, getVerifiedDoctorById, getVerifiedDoctors } from '../controllers/doctor.controller';
 import { validate } from '../middlewares/validate';
+import { createDoctorProfileSchema } from '../validators/doctor.schema';
 
 
 const router = Router();
 
-router.get('/', getListOfDoctors);
-router.get('/:id', getDoctorById);
+router.get('/', getVerifiedDoctors);
+router.get('/:id', getVerifiedDoctorById);
 
 router.post('/me/profile', requireAuth, validate(createDoctorProfileSchema), createDoctorProfile);
 

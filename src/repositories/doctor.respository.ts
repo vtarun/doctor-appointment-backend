@@ -1,8 +1,13 @@
+import { DoctorModel } from "../models/doctor.model";
 import { UserModel } from "../models/user.model";
 
 export const doctorRepository = {
-    async createProfile(){
-        return UserModel.findById();
+    async createDoctorProfile(data: any){
+        return DoctorModel.create(data);
+    },
+
+    async findByUserId(userId: string){
+        return DoctorModel.findOne({userId}).lean();
     },
     
     async getVerifiedDoctors(){
