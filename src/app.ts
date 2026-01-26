@@ -5,6 +5,7 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import doctorRoutes from './routes/doctor.routes';
 import adminRoutes from './routes/admin.routes';
+import availabilityRoutes from './routes/availability.routes';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/doctors', doctorRoutes);
 app.use('/admin', adminRoutes);
+app.use('/availability', availabilityRoutes);
 
 
 app.use((_req, _res, next)=>{
