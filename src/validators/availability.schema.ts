@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-export const availabilitySchema = z.object({
+export const createAvailabilitySchema = z.object({
     body: z.object({
-        startTime: z.string().datetime(),
-        endTime: z.string().datetime()
+        startTime: z.string().datetime({ message: "Invalid ISO datetime" }),
+        endTime: z.string().datetime({ message: "Invalid ISO datetime" })
     })
-});
+})

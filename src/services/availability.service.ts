@@ -32,4 +32,7 @@ export const availabilityService = {
             endTime: end
         });
     },
+    async getAvailability(doctorId: string){
+        return availabilitRepository.getAvailability(doctorId);
+    }
 }
