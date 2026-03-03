@@ -1,13 +1,13 @@
-export function generateSlots(start: Date, end: Date, slotInterval = 30){
-    let slots: {startTime: Date, endTime: Date}[] = [];
-    let current = new Date(start);
+export function generateSlots(start: Date, end: Date, slotMinutes = 30){
+    const slots: {startTime: Date, endTime: Date}[] = [];
+    let currentTime = new Date(start);
 
-    while(current < end){
-        const slotEnd = new Date(current.getTime() + slotInterval * 60 * 1000);
+    while(currentTime < end){
+        const slotEnd = new Date(currentTime.getTime() + (60 * 30 * 1000));
         if(slotEnd <= end){
-            slots.push({startTime: new Date(current), endTime: slotEnd});
+            slots.push({startTime: start, endTime: slotEnd});
         }
-        current = slotEnd;
+        currentTime = slotEnd;
     }
 
     return slots;
