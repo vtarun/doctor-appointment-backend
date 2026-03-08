@@ -7,6 +7,7 @@ import { Role } from '../constants/roles';
 export interface AuthRequest extends Request{
     user?: {
         userId: string;
+        email: string;
         role: Role;
     }
 }
@@ -23,7 +24,7 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
     }
     try{
         const payload = verifyAccessToken(token);
-        req.user = payload as {userId: string; email?: string; role: Role;};
+        req.user = payload as any; //as {userId: string; email?: string;};
         next();
     }catch{
         throw new AppError('Invalid or expired token', 401)

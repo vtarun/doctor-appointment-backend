@@ -7,5 +7,9 @@ export const availabilitRepository = {
 
     async getAvailability(doctorId: string){
         return AvailabilityModel.find({doctorId, startTime: {$gte: new Date()}}).sort({startTime: 1}).lean();
+    },
+
+    async createBulkAvailability(data: Array<{doctorId: string, startTime: Date, endTime: Date}>){
+        return AvailabilityModel.insertMany(data, {ordered: true});
     }
 }
