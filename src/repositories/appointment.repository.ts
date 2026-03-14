@@ -5,7 +5,19 @@ export const appointmentRepository = {
         return AppointmentModel.create(data);
     },
 
-    async findDoctorAppointments(doctorId: string,){
+    async findById(id: string){
+        return AppointmentModel.findById(id).lean();
+    },
+
+    async updateStatus(id: string, status : 'BOOKED' | 'COMPLETED' | 'CANCELLED'){
+        return AppointmentModel.findByIdAndUpdate(id, {status}, {new : true}).lean();
+    },
+
+    async updateNotes(id: string, doctorNotes: string){
+        return AppointmentModel.findByIdAndUpdate(id, {doctorNotes}, {new : true}).lean();
+    },
+
+    async findDoctorAppointments(doctorId: string){
         return AppointmentModel.find({doctorId}).sort({startTime: 1}).lean();
     },
 

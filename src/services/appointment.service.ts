@@ -59,9 +59,11 @@ export const appointmentService = {
     async findPatientAppointments(patientId : string){
          return appointmentRepository.findPatientAppointments(patientId);
     },
+    
+    async cancelAppointment(){},
 
-    async findConflictAppointment(){
+    async updateAppointment(){},
 
-    }
+    
 
 }
