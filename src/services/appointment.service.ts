@@ -51,19 +51,102 @@ export const appointmentService = {
             throw err;
         }
     },
+    
+    async cancelAppointment(appointmentId: string, userId: string, role: string){
+        const appointment = await this.getAppointmentById(appointmentId, userId, role);
+        if(!appointment){
+            throw new AppError('Appointment not found', 404);
+        }
 
-    async findDoctorAppointments(doctorId : string){
-        return appointmentRepository.findDoctorAppointments(doctorId);
+        if(appointment.status === 'CANCELLED'){
+            throw new AppError('Appointment already cancelled', 400);
+        }
+
+        if(appointment.status === 'COMPLETED'){
+            throw new AppError('Completed appointment can not be cancelled', 400);
+        }
+
+        return appointmentRepository.updateStatus(appointmentId, 'CANCELLED');
     },
 
-    async findPatientAppointments(patientId : string){
-         return appointmentRepository.findPatientAppointments(patientId);
+    async completeAppointment(appointmentId: string, userId: string){
+        const appointment = await appointmentRepository.findById(appointmentId);
+        if(!appointment){
+            throw new AppError('Appointment not found', 404);
+        }
+
+        if(appointment.status === 'COMPLETED'){
+            throw new AppError('Appointment already completed', 400);
+        }
+
+        if(appointment.status === 'CANCELLED'){
+            throw new AppError('Cancelled appointment can not be completed', 400);
+        }
+        
+        return appointmentRepository.updateStatus(appointmentId, 'COMPLETED');
+    },
+
+    async listForUser(userId: string, role: string){
+        if(role === 'PATIENT'){
+            return appointmentRepository.findPatientAppointments(userId);
+        }
+
+        if(role === 'DOCTOR'){
+            const doctor = await doctorRepository.findByUserId(userId);
+            if(!doctor){
+                throw new AppError('Doctor profile not found', 404);
+            }
+
+            return appointmentRepository.findDoctorAppointments(doctor._id.toString());
+        }
+
+        throw new AppError('Forbidded', 403);
     },
     
-    async cancelAppointment(){},
+    async addDoctorNotes(appointmentId: string, userId: string, doctorNotes: string){
+        const appointment = await appointmentRepository.findById(appointmentId);
+        if(!appointment){
+            throw new AppError('Appointment not found', 404);
+        }
 
-    async updateAppointment(){},
+        const doctor = await doctorRepository.findByUserId(userId);
 
-    
+        if(!doctor || appointment.doctorId.toString() !== doctor._id.toString()){
+            throw new AppError('Forbidded', 403);
+        }
+
+        if(appointment.status === 'CANCELLED'){
+            throw new AppError('Canot add notes to cancelled appointment', 400);
+        }
+
+        return appointmentRepository.updateNotes(appointmentId, doctorNotes);
+    },
+
+    async getAppointmentById(appointmentId: string, userId: string, role: string){
+        const appointment = await appointmentRepository.findById(appointmentId);
+
+        if(!appointment){
+            throw new AppError('Appointment not found', 404);
+        }
+
+        if(role === 'ADMIN'){
+            return appointment;
+        }
+        const isPatient = appointment.patientId.toString() === userId;
+        let isDoctor = false;
+
+        if(role === 'DOCTOR'){
+            const doctor = await doctorRepository.findByUserId(userId);
+            isDoctor = Boolean(doctor && doctor._id.toString() === appointment.doctorId.toString());
+        }
+
+        if(!isPatient && !isDoctor){
+            throw new AppError('Forbidden', 403);
+        }
+
+        return appointment;
+    }
+
+
 
 }
