@@ -20,7 +20,7 @@ export const creditWalletRepository = {
     }, 
     */
 
-    async createIfMissing(userId: string, session: any){
+    async createIfMissing(userId: string, session?: any){
         return CreaditWalletModel.findOneAndUpdate(
             { userId },
             { $setOnInsert: {userId, balance: 0} },
@@ -32,7 +32,7 @@ export const creditWalletRepository = {
         );
     },
 
-    async updateBalance(userId: string, amount: number, session: any){
+    async updateBalance(userId: string, amount: number, session?: any){
         return CreaditWalletModel.findOneAndUpdate(
             { userId },
             { $inc : {balance: amount}},
