@@ -13,13 +13,11 @@ const appointmentSchema = new mongoose.Schema({
         required: true
     },
     startTime: {
-        type: Date,
-        ref: 'User',
+        type: Date,        
         required: true
     },
     endTime: {
-        type: Date,
-        ref: 'User',
+        type: Date,        
         required: true
     },
     status: {

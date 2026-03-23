@@ -1,10 +1,12 @@
+import mongoose, { ClientSession } from "mongoose";
 import { CreaditWalletModel } from "../models/creditWallet.model";
 
 export const creditWalletRepository = {
-    async findByUserId(userId: string, session?: any){
+    async findByUserId(userId: string, session?: ClientSession){
         return CreaditWalletModel.findOne({userId}).session(session || null);
     },
-
+       
+    //TODO: Interview prep why this approach is not optimal.
     /*
     async createIfMissing(userId: string, session: any){
         let wallet = await this.findByUserId(userId, session);
@@ -43,4 +45,17 @@ export const creditWalletRepository = {
             }
         );
     }
+
+    //TODO: Interview prep what error we will get and why.
+    // async updateBalance(userId: string, amount: number, session?: ClientSession){
+    //     return CreaditWalletModel.findOneAndUpdate(
+    //         { userId },
+    //         { $inc : {balance: amount}},
+    //         {
+    //             new: true,
+    //             session,
+    //             runValidators: true
+    //         }
+    //     );
+    // }
 }

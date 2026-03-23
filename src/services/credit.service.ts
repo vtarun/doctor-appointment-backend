@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ClientSession } from "mongoose";
 import { AppError } from "../utils/appError";
 import { creditWalletRepository } from "../repositories/creditWallet.repository";
 import { creditTransactionRepository } from "../repositories/creditTransaction.repository";
@@ -23,11 +23,13 @@ export const creditService = {
         return creditTransactionRepository.listByUserId(userId);
     },
 
-    async applyBooking({patientId, doctorId, appointmentId}: IBookingParams){
-        const session =  mongoose.startSession();
-
+    async applyBooking({patientId, doctorId, appointmentId}: IBookingParams, existingSession?: ClientSession){
+        const session = existingSession || await mongoose.startSession();
+        const isLocalSession = !existingSession;
         try{
-            (await session).startTransaction();
+            if(isLocalSession) {
+                session.startTransaction();
+            }
             const patientWallet = await creditWalletRepository.createIfMissing(patientId, session);
             const doctorWallet = await creditWalletRepository.createIfMissing(doctorId, session);
 
@@ -55,21 +57,29 @@ export const creditService = {
                 balanceAfter: doctorBalance,
                 appointmentId
             }, session);
-
-            (await session).commitTransaction();
+            if(isLocalSession) {
+                (await session).commitTransaction();
+            }
         }catch(err){
-            (await session).abortTransaction();
+            if(isLocalSession) {
+                (await session).abortTransaction();
+            }
             throw err;
         }finally{
-            (await session).endSession();
+            if(isLocalSession) {
+                (await session).endSession();
+            }
         }
     },
 
-    async applyCancellation({patientId, doctorId, appointmentId}: IBookingParams){
-        const session =  mongoose.startSession();
-
+    async applyCancellation({patientId, doctorId, appointmentId}: IBookingParams, existingSession: ClientSession){
+        const session = existingSession || await mongoose.startSession();
+        const isLocalSession = !existingSession;
         try{
-            (await session).startTransaction();
+            if(isLocalSession){
+                session.startTransaction();
+            }
+            
             const patientWallet = await creditWalletRepository.createIfMissing(patientId, session);
             const doctorWallet = await creditWalletRepository.createIfMissing(doctorId, session);
 
@@ -100,12 +110,19 @@ export const creditService = {
                 appointmentId
             }, session);
 
-            (await session).commitTransaction();
+            if(isLocalSession){
+                await session.commitTransaction();
+            }
+            
         }catch(err){
-            (await session).abortTransaction();
+            if(isLocalSession){
+                await session.abortTransaction();
+            }
             throw err;
         }finally{
-            (await session).endSession();
+            if(isLocalSession){
+                session.endSession();
+            }
         }
     }
 

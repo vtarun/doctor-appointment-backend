@@ -1,16 +1,25 @@
+import { ClientSession } from "mongoose";
 import { AppointmentModel } from "../models/appointment.model";
 
+interface IBookAppointmentParams{
+    doctorId: string;
+    patientId: string; 
+    startTime: Date; 
+    endTime: Date;
+}
+
 export const appointmentRepository = {
-    async createAppointment(data: {doctorId: string, patientId: string, startTime: Date, endTime: Date}){
-        return AppointmentModel.create(data);
+    async createAppointment(data: IBookAppointmentParams, session?: ClientSession){
+        const docs = await AppointmentModel.create([data], {...(session && {session})});
+        return docs[0];
     },
 
     async findById(id: string){
         return AppointmentModel.findById(id).lean();
     },
 
-    async updateStatus(id: string, status : 'BOOKED' | 'COMPLETED' | 'CANCELLED'){
-        return AppointmentModel.findByIdAndUpdate(id, {status}, {new : true}).lean();
+    async updateStatus(id: string, status : 'BOOKED' | 'COMPLETED' | 'CANCELLED', session?: ClientSession){
+        return AppointmentModel.findByIdAndUpdate(id, {status}, {new : true, ...(session && {session}), runValidators: true}).lean();
     },
 
     async updateNotes(id: string, doctorNotes: string){
@@ -32,5 +41,7 @@ export const appointmentRepository = {
             status: { $ne: 'CANCELLED'}
         });
     }
+
+    //TODO: Implement pagination
 
 }

@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import { appointmentRepository } from "../repositories/appointment.repository"
 import { availabilitRepository } from "../repositories/availability.repository";
 import { doctorRepository } from "../repositories/doctor.respository";
 import { AppError } from "../utils/appError";
+import { creditService } from "./credit.service";
 
 export const appointmentService = {
     async createAppointment(patientId : string, data: any ){
@@ -18,7 +20,8 @@ export const appointmentService = {
         }
 
         const doctorId = data.doctorId;
-        const doctor = await doctorRepository.findByUserId(doctorId);
+        // const doctor = await doctorRepository.findByUserId(doctorId);
+        const doctor = await doctorRepository.findById(doctorId);
         if(!doctor){
             throw new AppError('Doctor profile not found', 404);
         }
@@ -40,15 +43,23 @@ export const appointmentService = {
         if(conflict){
             throw new AppError('Slot already booked', 409);
         }
-
-        try{
-            return appointmentRepository.createAppointment({doctorId, patientId, startTime, endTime});
+        const session = await mongoose.startSession();
+        try{        
+            session.startTransaction();
+            const appointment = await appointmentRepository.createAppointment({doctorId, patientId, startTime, endTime}, session);
+            const appointmentId = appointment!._id.toString();
+            await creditService.applyBooking({patientId, doctorId, appointmentId}, session);
+            await session.commitTransaction();
+            return appointment;
         }catch(err: any){
+            await session.abortTransaction();
             if(err.code === 11000) {
                 throw new AppError('Slot already booked', 409);
             }
 
             throw err;
+        }finally{
+            session.endSession();
         }
     },
     
@@ -65,8 +76,28 @@ export const appointmentService = {
         if(appointment.status === 'COMPLETED'){
             throw new AppError('Completed appointment can not be cancelled', 400);
         }
+        const doctorId = appointment.doctorId.toString()
+        const doctor = await doctorRepository.findById(doctorId);
 
-        return appointmentRepository.updateStatus(appointmentId, 'CANCELLED');
+        if(!doctor){
+            throw new AppError('Doctor not found', 404);
+        }
+
+        const session = await mongoose.startSession();
+
+        try{
+            session.startTransaction();
+            const updatedAppointment = await appointmentRepository.updateStatus(appointmentId, 'CANCELLED', session);
+            const patientId = appointment.patientId.toString();
+            await creditService.applyCancellation({patientId, doctorId, appointmentId}, session);
+            await session.commitTransaction();
+            return updatedAppointment;
+        }catch(err){
+            await session.abortTransaction();
+            throw err;
+        }finally{   
+            session.endSession();
+        }
     },
 
     async completeAppointment(appointmentId: string, userId: string){
