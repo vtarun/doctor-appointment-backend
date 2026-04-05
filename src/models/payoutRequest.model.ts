@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { IPayout } from "../interfaces/payout.interface";
 
-const payoutRequestSchema = new mongoose.Schema({
+const payoutRequestSchema = new mongoose.Schema<IPayout>({
     doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', index: true, required: true },
     paypalEmail: { type: String, required: true, trim: true, lowercase: true},
     status: { type: String, enum: ['PROCESSING', 'PROCESSED','REJECTED'], default: 'PROCESSING', index: true},
@@ -17,4 +18,4 @@ payoutRequestSchema.index(
     { partialFilterExpression: { status: 'PROCESSING'}}
 );
 
-export const PayoutRequestModel = mongoose.model('PayoutRequest', payoutRequestSchema);
+export const PayoutRequestModel = mongoose.model<IPayout>('PayoutRequest', payoutRequestSchema);
