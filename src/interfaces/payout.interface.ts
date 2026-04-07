@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IPayout{
-    doctorId: string,
+    doctorId: Types.ObjectId,
     paypalEmail: string,
     status: 'PROCESSING'| 'PROCESSED' | 'REJECTED',
     creditsRequested: number,

@@ -8,6 +8,7 @@ import adminRoutes from './routes/admin.routes';
 import availabilityRoutes from './routes/availability.routes';
 import appointmentRoutes from './routes/apppointment.routes';
 import creditRoutes from './routes/credit.routes';
+import payoutRoutes from './routes/payout.routes';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/admin', adminRoutes);
 app.use('/availability', availabilityRoutes);
 app.use('/appointments', appointmentRoutes);
 app.use('/credit', creditRoutes);
+app.use('/payouts', payoutRoutes);
 
 
 app.use((_req, _res, next)=>{

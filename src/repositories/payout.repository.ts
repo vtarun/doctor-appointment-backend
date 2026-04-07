@@ -28,7 +28,7 @@ export const payoutRepository = {
         return PayoutRequestModel.findById(id).lean();
     },
 
-    async updateStatus(id: string, status: 'PROCESSED' | 'REJECTED', processorId: string){
+    async updateStatus(id: string, status: 'PROCESSED' | 'REJECTED', processorId: string, session?: ClientSession){
         const updateData: Partial<IPayout> = {
             status,
             processedBy: new Types.ObjectId(processorId),
