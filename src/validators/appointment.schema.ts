@@ -10,13 +10,6 @@ export const appointmentSchema = z.object({
     })
 });
 
-
-export const appointmentIdParamsSchema = z.object({
-    params: z.object({
-        appointmentId: z.string().regex(objectIdRegex, `Invalid appointment id`)
-    })
-});
-
 export const doctorNotesSchema = z.object({
     params: z.object({
         appointmentId: z.string().regex(objectIdRegex, `Invalid appointment id`)

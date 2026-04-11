@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 const availabilitySchema = new mongoose.Schema({
-    doctorId: { type: mongoose.Schema.Types.ObjectId, require: true, index: true},
+    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', require: true, index: true},
     startTime: { type: Date, require: true},
     endTime: { type: Date, require: true},
 }, {timestamps: true});

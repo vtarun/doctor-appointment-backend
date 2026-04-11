@@ -14,7 +14,7 @@ export const adminPayoutService = {
         const session = await mongoose.startSession();
         try{
             session.startTransaction();
-            const payout = await payoutRepository.findById(payoutId);
+            const payout = await payoutRepository.findById(payoutId, session);
 
             if(!payout){
                 throw new AppError('Payout request not found', 400);
@@ -24,7 +24,7 @@ export const adminPayoutService = {
                 throw new AppError('Payout request is not pending', 400);
             }
 
-            const doctor = await doctorRepository.findById(payout.doctorId.toString());
+            const doctor = await doctorRepository.findById(payout.doctorId.toString(), session);
 
             if(!doctor){
                 throw new AppError('Doctor not found', 404);

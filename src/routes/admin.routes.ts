@@ -1,13 +1,14 @@
 import { Router } from 'express';
-import { requireAdmin } from '../middlewares/roles';
+import adminPayoutroutes from './adminPayout.routes';
+import adminDoctorroutes from './adminDoctor.routes';
 import { requireAuth } from '../middlewares/requireAuth';
-import { doctIdParamsSchema } from '../validators/admin.schema';
-import { validate } from '../middlewares/validate';
-import { rejectDoctor, verifyDoctor } from '../controllers/admin.controller';
+import { requireAdmin } from '../middlewares/roles';
 
 const router = Router();
 
-router.post('/doctor/:doctorId/verify', requireAuth, requireAdmin, validate(doctIdParamsSchema), verifyDoctor);
-router.post('/doctor/:doctorId/reject', requireAuth, requireAdmin, validate(doctIdParamsSchema), rejectDoctor);
+router.use(requireAuth, requireAdmin);
+
+router.use('/payouts', adminPayoutroutes);
+router.use('/doctor', adminDoctorroutes);
 
 export default router;

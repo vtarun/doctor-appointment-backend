@@ -20,7 +20,7 @@ export const authService = {
 
         const token = await signAccessToken({
             userId: user._id.toString(),
-            role: user.role
+            email: user.email
         });
         
         return {user: toUserResponse(user), token};
@@ -42,7 +42,7 @@ export const authService = {
 
         const token = await signAccessToken({
             userId: user._id.toString(),
-            role: user.role
+            email: user.email as string
         });
 
         return {user: toUserResponse(user), token};

@@ -12,7 +12,8 @@ export interface AuthRequest extends Request{
     }
 }
 
-export function requireAuth(req: AuthRequest, res: Response, next: NextFunction){
+// export function requireAuth(req: AuthRequest, res: Response, next: NextFunction){
+export function requireAuth(req: Request, res: Response, next: NextFunction){
     const authHeaders = req.headers.authorization;
     if(!authHeaders || !authHeaders.startsWith('Bearer ')){
         throw new AppError('Unauthenticated user', 401);

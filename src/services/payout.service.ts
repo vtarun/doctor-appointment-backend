@@ -31,16 +31,18 @@ export const payoutService = {
                 throw new AppError('Credits requested must be at least 1', 400);
             }
 
-            // const wallet = await creditWalletRepository.deductCredits(userId, data.creditsRequested, session);
+            const wallet = await creditWalletRepository.deductCredits(userId, data.creditsRequested, session);
 
-            
+            if(!wallet){
+                throw new AppError('Insufficient available credits for payout', 400);
+            }
 
             const grossAmount = data.creditsRequested * CREDIT_TO_MONEY_RATE;
             const feeAmount = data.creditsRequested * PLATFORM_FEE_PER_CREDIT;
             const netAmount =  data.creditsRequested * DOCTOR_NET_PER_CREDIT;
 
             const payout = await payoutRepository.create({
-                doctorId: doctor._id.toString(),
+                doctorId: doctor._id,
                 paypalEmail: data.paypalEmail,
                 creditsRequested: data.creditsRequested,
                 grossAmount,
@@ -66,11 +68,14 @@ export const payoutService = {
             throw new AppError('Doctor profile not found', 404);
         }
 
-        const wallet = await creditWalletRepository.createIfMissing(userId);
-        const processingRequest = await payoutRepository.findProcessingByDoctorId(doctor._id.toString());
+        const doctorIdStr = doctor._id.toString();
 
-        const history = await payoutRepository.listByDoctorId(doctor._id.toString());
-
+        const [wallet, processingRequest, history] = await Promise.all([
+            creditWalletRepository.createIfMissing(userId),
+            payoutRepository.findProcessingByDoctorId(doctorIdStr),
+            payoutRepository.listByDoctorId(doctorIdStr)
+        ]);
+        
         return {
             availableCredits: wallet.balance,
             estimatedGrossAmount: wallet.balance * CREDIT_TO_MONEY_RATE,
@@ -80,4 +85,6 @@ export const payoutService = {
             history
         }
     }
+
+    //TODO: implement cancel payout request by admin
 }

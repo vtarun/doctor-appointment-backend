@@ -24,8 +24,10 @@ export const payoutRepository = {
         return PayoutRequestModel.find({status: 'PROCESSING'}).sort({createdAt: -1}).lean();
     },
 
-    async findById(id: string){
-        return PayoutRequestModel.findById(id).lean();
+    async findById(id: string, session?: ClientSession){
+        const query = PayoutRequestModel.findById(id);
+        if(session) query.session(session);
+        return query.lean().exec();
     },
 
     async updateStatus(id: string, status: 'PROCESSED' | 'REJECTED', processorId: string, session?: ClientSession){

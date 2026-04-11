@@ -6,7 +6,7 @@ export const authRepository = {
         return UserModel.findOne({email}).select('+passwordHash');
     },
 
-    async createUser(data: {name: string, email: string, passwordHash: string, role?: string} ){
+    async createUser(data: {name: string, email: string, passwordHash: string, role?: string} ){        
         return UserModel.create(data);
     }
 }

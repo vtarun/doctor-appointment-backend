@@ -1,3 +1,4 @@
+import { ClientSession } from "mongoose";
 import { DoctorModel } from "../models/doctor.model";
 
 export const doctorRepository = {
@@ -9,8 +10,11 @@ export const doctorRepository = {
         return DoctorModel.findOne({userId}).lean();
     },
 
-    async findById(id: string){
-        return DoctorModel.findById(id).lean();
+    async findById(id: string, session: ClientSession){
+        const query = DoctorModel.findById(id).lean();
+        if(session) query.session(session);
+
+        return query.exec();
     },
     
     async getVerifiedDoctors(){

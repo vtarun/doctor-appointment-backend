@@ -44,6 +44,14 @@ export const creditWalletRepository = {
                 runValidators: true
             }
         );
+    },
+
+    async deductCredits(userId: string, amount: number, session: ClientSession){
+        return CreaditWalletModel.findOneAndUpdate(
+            { userId, balance: { $gte: amount} }, 
+            { $inc: { balance: -amount} },
+            { session, new: true }
+        );
     }
 
     //TODO: Interview prep what error we will get and why.

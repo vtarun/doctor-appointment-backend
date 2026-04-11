@@ -5,7 +5,7 @@ import { AppError } from './appError';
 
 interface JWTPayload {
     userId: string,
-    role: string
+    email: string
 }
 
 const ACCESS_TOKEN_EXPIRY = '15m';
@@ -19,25 +19,14 @@ export async function comparePassword(password: string, hash: string){
 }
 
 export async function signAccessToken(payload: JWTPayload){
-    return Jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
+    try{        
+        return Jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
+    }catch(err){        
+        throw new AppError('Issue while creating token', 500);
+    }
 }
 
-// export async function verifyAccessToken(token: string): JWTPayload{
-//     try{        
-//         return Promise.resolve(Jwt.verify(token, JWT_SECRET) as JWTPayload)
-//     } catch(err) {
-//         if(err instanceof Jwt.TokenExpiredError){
-//             throw new AppError('Token expired', 401);
-//         }
-//         if(err instanceof Jwt.JsonWebTokenError){
-//             throw new AppError('Invalid token', 401);
-//         }
-//         throw err;
-//     }
-// }
-
-
-export function verifyAccessToken(token: string): JWTPayload{
+export async function verifyAccessToken(token: string): Promise<JWTPayload>{
     try{        
         return Jwt.verify(token, JWT_SECRET) as JWTPayload;
     } catch(err) {

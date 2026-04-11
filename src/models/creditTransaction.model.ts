@@ -13,7 +13,8 @@ const creditTransactionSchema = new mongoose.Schema({
             'BOOKING_DEBIT',
             'BOOKING_EARNING',
             'CANCELLATION_REFUND',
-            'CANCELLATION_REVERSAL'
+            'CANCELLATION_REVERSAL',
+            'PAYOUT_DEDUC'
         ],
         required: true
     },
@@ -27,8 +28,7 @@ const creditTransactionSchema = new mongoose.Schema({
     },
     appointmentId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Appointment',
-        required: true,
+        ref: 'Appointment'
     },
     meta: {
         type: Object,
