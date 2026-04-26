@@ -10,7 +10,7 @@ export const doctorRepository = {
         return DoctorModel.findOne({userId}).lean();
     },
 
-    async findById(id: string, session: ClientSession){
+    async findById(id: string, session?: ClientSession){
         const query = DoctorModel.findById(id).lean();
         if(session) query.session(session);
 

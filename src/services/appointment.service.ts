@@ -4,6 +4,7 @@ import { availabilitRepository } from "../repositories/availability.repository";
 import { doctorRepository } from "../repositories/doctor.respository";
 import { AppError } from "../utils/appError";
 import { creditService } from "./credit.service";
+import { videoProvider } from "../providers";
 
 export const appointmentService = {
     async createAppointment(patientId : string, data: any ){
@@ -19,34 +20,48 @@ export const appointmentService = {
             throw new AppError('Cannot book past appointments', 400);
         }
 
+        let videoSessionId: string | undefined;
+
+        if(data.consultationType === 'VIDEO'){
+            const videoSession = await videoProvider.createSession();
+            videoSessionId = videoSession.sessionId;            
+        }
+
         const doctorId = data.doctorId;
-        // const doctor = await doctorRepository.findByUserId(doctorId);
-        const doctor = await doctorRepository.findById(doctorId);
-        if(!doctor){
-            throw new AppError('Doctor profile not found', 404);
-        }
-
-        if(doctor.verificationStatus !== 'VERIFIED'){
-            throw new AppError('Doctor not verified', 403);
-        }
-
-        const availability = await availabilitRepository.getAvailability(doctorId);
-
-        const slotInsideAvailability = availability.some((w: any) => (startTime >= w.startTime && endTime < w.endTime ));
-
-        if(!slotInsideAvailability){
-            throw new AppError('Slot outside doctor availability', 400);
-        }
-
-        const conflict = await appointmentRepository.findConflictAppointment(doctorId, startTime);
-        
-        if(conflict){
-            throw new AppError('Slot already booked', 409);
-        }
         const session = await mongoose.startSession();
+
         try{        
             session.startTransaction();
-            const appointment = await appointmentRepository.createAppointment({doctorId, patientId, startTime, endTime}, session);
+            const doctor = await doctorRepository.findById(doctorId, session);
+            if(!doctor){
+                throw new AppError('Doctor profile not found', 404);
+            }
+
+            if(doctor.verificationStatus !== 'VERIFIED'){
+                throw new AppError('Doctor not verified', 403);
+            }
+
+            const availability = await availabilitRepository.getAvailability(doctorId, session);
+
+            const slotInsideAvailability = availability.some((w: any) => (startTime >= w.startTime && endTime <= w.endTime ));
+
+            if(!slotInsideAvailability){
+                throw new AppError('Slot outside doctor availability', 400);
+            }
+
+            const conflict = await appointmentRepository.findConflictAppointment(doctorId, startTime, session);
+            
+            if(conflict){
+                throw new AppError('Slot already booked', 409);
+            }
+            const appointment = await appointmentRepository.createAppointment({
+                doctorId, 
+                patientId, 
+                startTime, 
+                endTime, 
+                consultationType: data.consultationType,
+                ...(videoSessionId && { videoSessionId }),
+            }, session);
             const appointmentId = appointment!._id.toString();
             await creditService.applyBooking({patientId, doctorId, appointmentId}, session);
             await session.commitTransaction();

@@ -9,6 +9,7 @@ import availabilityRoutes from './routes/availability.routes';
 import appointmentRoutes from './routes/apppointment.routes';
 import creditRoutes from './routes/credit.routes';
 import payoutRoutes from './routes/payout.routes';
+import videoRoutes from './routes/video.routes';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/availability', availabilityRoutes);
 app.use('/appointments', appointmentRoutes);
 app.use('/credit', creditRoutes);
 app.use('/payouts', payoutRoutes);
+app.use('/video', videoRoutes);
 
 
 app.use((_req, _res, next)=>{

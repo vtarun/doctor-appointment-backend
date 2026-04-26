@@ -6,7 +6,8 @@ export const appointmentSchema = z.object({
     body: z.object({
         doctorId: z.string(),
         startTime: z.string().datetime(),
-        endTime: z.string().datetime(),    
+        endTime: z.string().datetime(),  
+        consultationType: z.enum(['IN_PERSON', 'VIDEO']).default('IN_PERSON')  
     })
 });
 

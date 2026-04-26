@@ -6,6 +6,8 @@ interface IBookAppointmentParams{
     patientId: string; 
     startTime: Date; 
     endTime: Date;
+    consultationType: string;
+    videoSessionId?: string;
 }
 
 export const appointmentRepository = {
@@ -34,12 +36,24 @@ export const appointmentRepository = {
         return AppointmentModel.find({patientId}).sort({startTime: 1}).lean();
     },
 
-    async findConflictAppointment(doctorId: string, startTime: Date){
-        return AppointmentModel.findOne({
+    async findConflictAppointment(doctorId: string, startTime: Date, session?: ClientSession){
+        const query = AppointmentModel.findOne({
             doctorId, 
             startTime,
             status: { $ne: 'CANCELLED'}
         });
+
+        if(session) query.session(session);
+
+        return query.exec();
+    },
+
+    async updateVideoSession(id: string, videoSessionId: string, session?: ClientSession){
+        const query = AppointmentModel.findByIdAndUpdate(id, {videoSessionId}, {new : true}).lean();
+
+        if(session) query.session(session);
+
+        return query.exec();
     }
 
     //TODO: Implement pagination

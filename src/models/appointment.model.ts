@@ -25,6 +25,19 @@ const appointmentSchema = new mongoose.Schema({
         enum: ['BOOKED', 'COMPLETED', 'CANCELLED'],
         default: 'BOOKED'
     },
+    consultationType: {
+        type: String,
+        enum: ['IN_PERSON', 'VIDEO'],
+        default: 'IN_PERSON',
+        required:  true
+    },
+    videoSessionId: {
+        type: String
+    },
+    // videoDetails:{
+    //     provider: { type: String, emun: ['STUB', 'TWILIO', 'ZOOM', 'AGORA'] },
+    //     sessionId: { type: String }
+    // },
     doctorNotes: { 
         type: String, 
         trim: true 
