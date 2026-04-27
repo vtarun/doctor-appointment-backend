@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Role } from "../constants/roles";
 import { AuthRequest } from "./requireAuth";
 import { AppError } from "../utils/appError";

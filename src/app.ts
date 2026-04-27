@@ -10,14 +10,22 @@ import appointmentRoutes from './routes/apppointment.routes';
 import creditRoutes from './routes/credit.routes';
 import payoutRoutes from './routes/payout.routes';
 import videoRoutes from './routes/video.routes';
+import { requestId } from './middlewares/requestId';
+import { requestLogger } from './middlewares/requestLogger';
 
 const app = express();
 
+app.use(requestId);
 app.use(express.json());
+
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
+app.use(requestLogger);
 
 app.get('/health', (req, res)=>{
 	res.status(200).json({status: "ok"});
 });
+
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
