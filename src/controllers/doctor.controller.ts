@@ -3,7 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { doctorService } from "../services/doctor.service";
 
 export const getVerifiedDoctors = asyncHandler(async (req: Request, res: Response) => {
-    const doctors = await doctorService.getVerifiedDoctors();
+    const { speciality } = req.query;
+    const doctors = await doctorService.getVerifiedDoctors(speciality as string);
     res.status(200).json(doctors);
 });
 

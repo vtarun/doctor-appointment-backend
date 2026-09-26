@@ -15,8 +15,8 @@ export const doctorService = {
         return doctor;
     },
     
-    async getVerifiedDoctors(){
-        return doctorRepository.getVerifiedDoctors();
+    async getVerifiedDoctors(speciality?: string){
+        return doctorRepository.getVerifiedDoctors(speciality);
     },
 
     async getVerifiedDoctorById(doctorId: string){

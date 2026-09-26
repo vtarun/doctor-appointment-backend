@@ -17,8 +17,10 @@ export const doctorRepository = {
         return query.exec();
     },
     
-    async getVerifiedDoctors(){
-        return DoctorModel.find({ verificationStatus: 'VERIFIED' }).populate('userId', 'name email').lean();
+    async getVerifiedDoctors(speciality?: string){
+        const filter: Record<string, string> = { verificationStatus: 'VERIFIED' }
+        if(speciality) filter.speciality = speciality;
+        return DoctorModel.find(filter).populate('userId', 'name email').lean();
     },
 
     async getVerifiedDoctorById(doctorId: string){

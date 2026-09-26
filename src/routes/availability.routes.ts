@@ -8,7 +8,8 @@ import { bulkCreateAvailabilitySchema, createAvailabilitySchema } from '../valid
 const router = Router();
 
 router.post('/', requireAuth, requireDoctor, validate(createAvailabilitySchema), createAvailability);
-router.get('/:doctorId', getAvailability);
 router.get('/bulk', requireAuth, requireDoctor, validate(bulkCreateAvailabilitySchema), createBulkAvailability);
+router.get('/:doctorId', getAvailability);
+
 
 export default router;

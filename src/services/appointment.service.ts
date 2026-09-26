@@ -49,7 +49,7 @@ export const appointmentService = {
                 throw new AppError('Slot outside doctor availability', 400);
             }
 
-            const conflict = await appointmentRepository.findConflictAppointment(doctorId, startTime, session);
+            const conflict = await appointmentRepository.findConflictAppointment(doctorId, startTime, endTime, session);
             
             if(conflict){
                 throw new AppError('Slot already booked', 409);

@@ -33,14 +33,24 @@ export const appointmentRepository = {
     },
 
     async findPatientAppointments(patientId: string){
-        return AppointmentModel.find({patientId}).sort({startTime: 1}).lean();
+        return AppointmentModel.find({patientId})
+            .populate({
+              path: 'doctorId',
+              select: 'speciality userId',
+              populate: {
+                path: 'userId',
+                select: 'name'
+              }
+            }).sort({startTime: 1}).lean();
     },
 
-    async findConflictAppointment(doctorId: string, startTime: Date, session?: ClientSession){
+    async findConflictAppointment(doctorId: string, startTime: Date, endTime: Date, session?: ClientSession){
         const query = AppointmentModel.findOne({
             doctorId, 
             startTime,
-            status: { $ne: 'CANCELLED'}
+            status: { $ne: 'CANCELLED'},
+            startTime: { $lt: endTime },
+            endTime: { $gt: startTime }
         });
 
         if(session) query.session(session);
