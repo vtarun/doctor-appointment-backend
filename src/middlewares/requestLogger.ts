@@ -1,15 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from '../utils/logger';
+import { NODE_ENV } from '../config/env';
 
 export function requestLogger( req: Request, res: Response, next: NextFunction){
     const start = Date.now();
-
-    logger.info({
-        msg: 'request_started',
-        requestId: req.headers['x-request-id'],
-        method: req.method,
-        path: req.originalUrl
-    });
+    
+    if(NODE_ENV !== 'production'){
+        logger.info({
+            msg: 'request_started',
+            requestId: req.headers['x-request-id'],
+            method: req.method,
+            path: req.originalUrl
+        });
+    }
 
     res.on('finish', () => {
         logger.info({

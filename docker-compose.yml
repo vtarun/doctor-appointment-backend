@@ -2,6 +2,7 @@ services:
   mongo:
     image: mongo:7
     container_name: doctor-mongo
+    command: ["--replSet", "rs0"]
     ports:
       - "27017:27017"
     volumes:
@@ -19,3 +20,40 @@ services:
       - es_data:/usr/share/elasticsearch/data
     networks:
       - elk_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: doctor-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports: 
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk_network
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.13.4
+    container_name: doctor-filebeat
+    user: root
+    volumes:
+      - ./logs:/app/logs:ro
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    depends_on:
+      - elasticsearch
+volumes:
+  mongo_data:
+    driver: local
+  es_data:
+    driver: local
+
+networks:
+  elk_network:
+    driver: bridge
+
+
+
+
+
+
+      

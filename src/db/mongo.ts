@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { MONGO_URI } from '../config/env';
+import { logger } from '../utils/logger';
 
 export async function connectMongo() {
     try {

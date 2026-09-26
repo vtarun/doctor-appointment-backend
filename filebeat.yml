@@ -1,0 +1,20 @@
+filebeat.inputs:
+  - type: filestream
+    id: doctor-backend-logs
+    enabled: true
+    paths:
+      - /app/logs/app.log
+    parsers:
+      - ndjson:
+          target: ""
+          overwrite_keys: true
+          add_error_key: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "doctor-backend-logs-%{+yyyy.MM.dd}"
+
+setup.template.name: "doctor-backend-logs"
+setup.template.pattern: "doctor-backend-logs-*"
+
+logging.level: info

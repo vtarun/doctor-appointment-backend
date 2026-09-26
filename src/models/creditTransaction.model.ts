@@ -14,7 +14,7 @@ const creditTransactionSchema = new mongoose.Schema({
             'BOOKING_EARNING',
             'CANCELLATION_REFUND',
             'CANCELLATION_REVERSAL',
-            'PAYOUT_DEDUC'
+            'PAYOUT_DEDUCTION'
         ],
         required: true
     },

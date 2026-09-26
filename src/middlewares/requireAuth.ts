@@ -25,7 +25,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction){
     }
     try{
         const payload = verifyAccessToken(token);
-        req.user = payload as any; //as {userId: string; email?: string;};
+        req.user = payload as any //{userId: string; email: string; role: string};
         next();
     }catch{
         throw new AppError('Invalid or expired token', 401)

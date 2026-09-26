@@ -17,3 +17,27 @@ export const bulkCreateAvailabilitySchema = z.object({
         ).min(1).max(50)
     })
 });
+
+export const availabilityQuerySchema = z.object({
+  query: z.object({
+      from: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/),
+
+      to: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+    })
+    .superRefine(({ from, to }, context) => {
+      const effectiveTo = to ?? from;
+
+      if (effectiveTo < from) {
+        context.addIssue({
+          code: "custom",
+          path: ["to"],
+          message: "`to` cannot be earlier than `from`",
+        });
+      }
+    }),
+});

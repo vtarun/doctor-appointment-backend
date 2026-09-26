@@ -12,13 +12,13 @@ export function errorHandler(
 	const requestId = req.headers['x-request-id'];
 
 	if(err instanceof AppError && err.isOperational){
-
+		const statusCode = err.statusCode;
 		logger.warn({
 			msg: 'operational_error',
 			requestId,
 			method: req.method,
             path: req.originalUrl,
-            statusCode: res.statusCode,
+            statusCode: err.statusCode,
 			error: err.message,
             userId: req.user?.userId,
             role: req.user?.role
