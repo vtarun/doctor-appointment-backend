@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, unique: true, required: true, lowercase: true, trim: true },
+    gender: { type: String, enum: ['MALE', 'FEMALE', 'OTHER'], required: true, },
+    dateOfBirth: {type: String, required: true, },
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: ['PATIENT', 'DOCTOR', 'ADMIN'] },
     plan: { type: String, enum: ['free_user', 'standard', 'premium'], default: 'free_user'}

@@ -8,7 +8,7 @@ export const createAppointment = asyncHandler(async (req: Request, res: Response
 });
 
 export const getMyAppointments = asyncHandler(async (req: Request, res: Response) => {
-    const appointments = await appointmentService.listForUser(req.user!.userId, req.user!.role);
+    const appointments = await appointmentService.listForUser(req.user!.userId);
     return res.status(201).json(appointments);
 });
 
@@ -18,12 +18,12 @@ export const completeAppointment = asyncHandler(async (req: Request, res: Respon
 });
 
 export const cancelAppointment = asyncHandler(async (req: Request, res: Response) => {
-    const appointment = await appointmentService.cancelAppointment(req.params.appointmentId as string, req.user!.userId, req.user!.role);
+    const appointment = await appointmentService.cancelAppointment(req.params.appointmentId as string, req.user!.userId);
     return res.status(201).json(appointment);
 });
 
 export const getAppointmentById = asyncHandler(async (req: Request, res: Response) => {
-    const appointment = await appointmentService.getAppointmentById(req.params.appointmentId as string, req.user!.userId, req.user!.role);
+    const appointment = await appointmentService.getAppointmentById(req.params.appointmentId as string, req.user!.userId);
     return res.status(201).json(appointment);
 });
 

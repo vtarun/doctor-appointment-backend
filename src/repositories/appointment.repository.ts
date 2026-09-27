@@ -47,7 +47,6 @@ export const appointmentRepository = {
     async findConflictAppointment(doctorId: string, startTime: Date, endTime: Date, session?: ClientSession){
         const query = AppointmentModel.findOne({
             doctorId, 
-            startTime,
             status: { $ne: 'CANCELLED'},
             startTime: { $lt: endTime },
             endTime: { $gt: startTime }

@@ -2,8 +2,9 @@ import { ClientSession } from "mongoose";
 import { DoctorModel } from "../models/doctor.model";
 
 export const doctorRepository = {
-    async createDoctorProfile(data: any){
-        return DoctorModel.create(data);
+    async createDoctorProfile(data: any, session?: ClientSession){
+        const docs = await DoctorModel.create([data], {...(session && {session})});
+        return docs[0];
     },
 
     async findByUserId(userId: string){

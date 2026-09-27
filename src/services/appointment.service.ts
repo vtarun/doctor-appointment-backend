@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { appointmentRepository } from "../repositories/appointment.repository"
 import { availabilitRepository } from "../repositories/availability.repository";
+import { userRepository } from "../repositories/user.repository";
 import { doctorRepository } from "../repositories/doctor.respository";
 import { AppError } from "../utils/appError";
 import { creditService } from "./credit.service";
@@ -78,8 +79,8 @@ export const appointmentService = {
         }
     },
     
-    async cancelAppointment(appointmentId: string, userId: string, role: string){
-        const appointment = await this.getAppointmentById(appointmentId, userId, role);
+    async cancelAppointment(appointmentId: string, userId: string){
+        const appointment = await this.getAppointmentById(appointmentId, userId);
         if(!appointment){
             throw new AppError('Appointment not found', 404);
         }
@@ -91,6 +92,7 @@ export const appointmentService = {
         if(appointment.status === 'COMPLETED'){
             throw new AppError('Completed appointment can not be cancelled', 400);
         }
+
         const doctorId = appointment.doctorId.toString()
         const doctor = await doctorRepository.findById(doctorId);
 
@@ -132,7 +134,15 @@ export const appointmentService = {
         return appointmentRepository.updateStatus(appointmentId, 'COMPLETED');
     },
 
-    async listForUser(userId: string, role: string){
+    async listForUser(userId: string){
+        const user = await userRepository.findByUserId(userId);
+
+        if(!user){
+            throw new AppError('User not found', 404);
+        }
+
+        const role = user.role;
+
         if(role === 'PATIENT'){
             return appointmentRepository.findPatientAppointments(userId);
         }
@@ -168,12 +178,20 @@ export const appointmentService = {
         return appointmentRepository.updateNotes(appointmentId, doctorNotes);
     },
 
-    async getAppointmentById(appointmentId: string, userId: string, role: string){
+    async getAppointmentById(appointmentId: string, userId: string){
         const appointment = await appointmentRepository.findById(appointmentId);
 
         if(!appointment){
             throw new AppError('Appointment not found', 404);
         }
+
+        const user = await userRepository.findByUserId(userId);
+
+        if(!user){
+            throw new AppError('User not found', 404);
+        }
+
+        const role = user.role;
 
         if(role === 'ADMIN'){
             return appointment;

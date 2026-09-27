@@ -6,6 +6,9 @@ export const userRepository = {
     // async findById(id: string){
     //     return UserModel.findById(id).lean();
     // },
+    async findByUserId(userId: string){
+        return UserModel.findOne({userId}).lean();
+    },
 
     async findById(id: string, session?: ClientSession, useLean = true){
         const query = UserModel.findById(id);

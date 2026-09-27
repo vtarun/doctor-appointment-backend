@@ -11,7 +11,11 @@ interface JWTPayload {
 const ACCESS_TOKEN_EXPIRY = '15m';
 
 export async function hashPassword(password: string){
-    return bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
+    const rounds = Number(BCRYPT_SALT_ROUNDS);
+    if (!Number.isInteger(rounds) || rounds < 4 || rounds > 31) {
+      throw new Error('Invalid BCRYPT_SALT_ROUNDS');
+    }
+    return bcrypt.hash(password, rounds);
 }
 
 export async function comparePassword(password: string, hash: string){

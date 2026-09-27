@@ -8,12 +8,12 @@ export interface AuthRequest extends Request{
     user?: {
         userId: string;
         email: string;
-        role: Role;
+        role: Role; //TODO: remove this line
     }
 }
 
 // export function requireAuth(req: AuthRequest, res: Response, next: NextFunction){
-export function requireAuth(req: Request, res: Response, next: NextFunction){
+export async function requireAuth(req: Request, res: Response, next: NextFunction){
     const authHeaders = req.headers.authorization;
     if(!authHeaders || !authHeaders.startsWith('Bearer ')){
         throw new AppError('Unauthenticated user', 401);
@@ -24,8 +24,8 @@ export function requireAuth(req: Request, res: Response, next: NextFunction){
         throw new AppError('Token missing', 401);
     }
     try{
-        const payload = verifyAccessToken(token);
-        req.user = payload as any //{userId: string; email: string; role: string};
+        const payload = await verifyAccessToken(token);
+        req.user = payload as any //{userId: string, email: string};
         next();
     }catch{
         throw new AppError('Invalid or expired token', 401)

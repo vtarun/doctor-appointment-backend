@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { userService } from '../services/user.service';
+import { toUserResponse } from "../mappers/user.mappper";
 
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
 	const user = await userService.getById(req.params.userId as string);
-	res.status(200).json(user);
+	// res.status(200).json(user);
+	res.status(200).json(toUserResponse(user));
 });
 
 export const getme = asyncHandler(async (req: Request, res: Response) => {
@@ -13,7 +15,8 @@ export const getme = asyncHandler(async (req: Request, res: Response) => {
 		return res.status(401).json({ message: 'User not authenticated' });
 	}
 	const user = await userService.getById(req.user.userId);
-	res.status(200).json(user);
+	// res.status(200).json(user);
+	res.status(200).json(toUserResponse(user));
 })
 
 

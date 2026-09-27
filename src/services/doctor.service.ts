@@ -1,6 +1,5 @@
-import { DoctorModel } from '../models/doctor.model';
+
 import { doctorRepository } from '../repositories/doctor.respository';
-import { userRepository } from '../repositories/user.repository';
 import { AppError } from '../utils/appError';
 
 export const doctorService = { 

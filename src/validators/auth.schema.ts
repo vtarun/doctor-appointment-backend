@@ -7,7 +7,7 @@ export const loginSchema = z.object({
             .max(254, 'Email must be less than 255 characters'), // RFC 5321 limit
         password: z.string()
             .min(8, 'Password must be at least 8 characters long')
-            .max(128, 'Password must be less than 129 characters')
+            .max(15, 'Password must be less than 16 characters')
             .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
                 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
     }),
@@ -23,6 +23,12 @@ export const registerSchema = z.object({
         email: z.string()
             .email('Invalid email format')
             .max(254, 'Email must be less than 255 characters'),
+        gender: z.enum(['MALE', 'FEMALE', 'OTHER'] as const, {
+            error: () => ({ message: 'Please select a gender'})
+        }),
+        dateOfBirth: z.string({
+            error: 'Please select valid date of birth'
+        }),
         password: z.string()
             .min(8, 'Password must be at least 8 characters long')
             .max(128, 'Password must be less than 129 characters')
