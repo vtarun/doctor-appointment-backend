@@ -4,11 +4,13 @@ import { requireDoctor } from '../middlewares/roles';
 import { createAvailability, createBulkAvailability, getAvailability } from '../controllers/availability.controller';
 import { validate } from '../middlewares/validate';
 import { bulkCreateAvailabilitySchema, createAvailabilitySchema } from '../validators/availability.schema';
+import { requireVerifiedDoctor } from '../middlewares/requireVerifiedDoctor';
 
 const router = Router();
 
-router.post('/', requireAuth, requireDoctor, validate(createAvailabilitySchema), createAvailability);
-router.get('/bulk', requireAuth, requireDoctor, validate(bulkCreateAvailabilitySchema), createBulkAvailability);
+
+router.post("/", requireAuth, requireDoctor, requireVerifiedDoctor, validate(createAvailabilitySchema), createAvailability);
+router.post( "/bulk", requireAuth, requireDoctor, requireVerifiedDoctor, validate(bulkCreateAvailabilitySchema), createBulkAvailability);
 router.get('/:doctorId', getAvailability);
 
 

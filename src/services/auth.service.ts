@@ -1,16 +1,17 @@
-import { toUserResponse } from "../mappers/user.mappper";
-import { authRepository } from "../repositories/auth.repository";
-import { AppError } from "../utils/appError";
-import { comparePassword, hashPassword, signAccessToken } from "../utils/auth";
-import mongoose from "mongoose";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
+import mongoose from "mongoose";
 
-import { UserModel } from "../models/user.model";
-import { DoctorModel } from "../models/doctor.model";
-import { doctorOnboardingBodySchema } from "../validators/doctor.schema";
+import { toUserResponse } from "../mappers/user.mappper";
+
+import { authRepository } from "../repositories/auth.repository";
 import { doctorRepository } from "../repositories/doctor.respository";
+
+import { doctorOnboardingBodySchema } from "../validators/doctor.schema";
+
+import { comparePassword, hashPassword, signAccessToken } from "../utils/auth";
+import { AppError } from "../utils/appError";
 
 export const authService = {
     async register(data: {name: string, email: string, gender: string, dateOfBirth: string, password: string}) {

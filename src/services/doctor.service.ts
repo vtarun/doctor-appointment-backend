@@ -20,6 +20,10 @@ export const doctorService = {
 
     async getVerifiedDoctorById(doctorId: string){
         return doctorRepository.getVerifiedDoctorById(doctorId);
+    },
+
+    async getme(doctorId: string){
+        return doctorRepository.findByUserId(doctorId);
     }
 
     

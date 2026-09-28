@@ -30,5 +30,8 @@ export const doctorRepository = {
 
     async updateStatus(doctorId: string, status: string){
         return DoctorModel.findByIdAndUpdate(doctorId, {verificationStatus: status}, {new : true}).lean();
-    }
+    },
+    async findVerificationByUserId(userId: string) {
+        return DoctorModel.findOne({ userId }).select("verificationStatus").lean().exec();
+    },
 }

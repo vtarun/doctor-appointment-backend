@@ -3,9 +3,9 @@ import { UserModel } from "../models/user.model";
 import { IUser } from "../interfaces/user.interface";
 
 export const userRepository = {
-    // async findById(id: string){
-    //     return UserModel.findById(id).lean();
-    // },
+    async findAuthIdentityById(userId: string) {
+        return UserModel.findById(userId).select("email role").lean().exec();
+    },
     async findByUserId(userId: string){
         return UserModel.findOne({userId}).lean();
     },

@@ -117,21 +117,43 @@ export const appointmentService = {
         }
     },
 
-    async completeAppointment(appointmentId: string, userId: string){
-        const appointment = await appointmentRepository.findById(appointmentId);
-        if(!appointment){
-            throw new AppError('Appointment not found', 404);
-        }
+    async completeAppointment(appointmentId: string, doctorId: string){
+        // const appointment = await appointmentRepository.findById(appointmentId);
+        // if(!appointment){
+        //     throw new AppError('Appointment not found', 404);
+        // }
 
-        if(appointment.status === 'COMPLETED'){
-            throw new AppError('Appointment already completed', 400);
-        }
+        // if(appointment.status === 'COMPLETED'){
+        //     throw new AppError('Appointment already completed', 400);
+        // }
 
-        if(appointment.status === 'CANCELLED'){
-            throw new AppError('Cancelled appointment can not be completed', 400);
-        }
+        // if(appointment.status === 'CANCELLED'){
+        //     throw new AppError('Cancelled appointment can not be completed', 400);
+        // }
         
-        return appointmentRepository.updateStatus(appointmentId, 'COMPLETED');
+        // return appointmentRepository.updateStatus(appointmentId, 'COMPLETED');
+
+        const appointment = await appointmentRepository.findById(appointmentId);
+
+        if (!appointment) {
+            throw new AppError("Appointment not found", 404);
+        }
+
+        if (appointment.doctorId.toString() !== doctorId) {
+            throw new AppError("Forbidden", 403);
+        }
+
+        if (appointment.status !== "BOOKED") {
+            throw new AppError("Only booked appointments can be completed", 409);
+        }
+
+        const completed = await appointmentRepository.completeBookedAppointment(appointmentId, doctorId);
+
+        if (!completed) {
+            throw new AppError("Appointment is no longer booked", 409);
+        }
+
+        return completed;
     },
 
     async listForUser(userId: string){
@@ -210,7 +232,4 @@ export const appointmentService = {
 
         return appointment;
     }
-
-
-
 }

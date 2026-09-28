@@ -12,8 +12,8 @@ export const getMyAppointments = asyncHandler(async (req: Request, res: Response
     return res.status(201).json(appointments);
 });
 
-export const completeAppointment = asyncHandler(async (req: Request, res: Response) => {
-    const appointment = await appointmentService.completeAppointment(req.params.appointmentId as string, req.user!.userId);
+export const completeAppointment = asyncHandler(async (req: Request, res: Response) => {    
+    const appointment = await appointmentService.completeAppointment(req.params.appointmentId as string, req.verifiedDoctorId!);
     return res.status(201).json(appointment);
 });
 

@@ -63,7 +63,19 @@ export const appointmentRepository = {
         if(session) query.session(session);
 
         return query.exec();
-    }
+    },
+
+    async completeBookedAppointment(appointmentId: string, doctorId: string, session?: ClientSession) {
+        const query = AppointmentModel.findOneAndUpdate(
+            { _id: appointmentId, doctorId, status: "BOOKED" },
+            { $set: { status: "COMPLETED" } },
+            { new: true, runValidators: true }
+        );
+
+        if(session) query.session(session);
+
+        return query.lean().exec();
+    },
 
     //TODO: Implement pagination
 

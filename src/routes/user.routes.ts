@@ -8,7 +8,7 @@ import { objectIdParams } from '../validators/objectId.schema';
 
 const router = Router();
 
+router.get('/me', requireAuth, getme);
 router.get('/:userId', requireAuth, requireAdmin, validate(objectIdParams('userId')), getUser);
-router.get('/me', requireAuth, getme)
 
 export default router;

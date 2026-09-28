@@ -18,3 +18,8 @@ export const createDoctorProfile = asyncHandler(async (req: Request, res: Respon
     const doctor = await doctorService.createDoctorProfile(req.user!.userId, req.body);
     res.status(200).json(doctor);
 });
+
+export const getme = asyncHandler(async (req: Request, res: Response) => {
+    const doctor = await doctorService.getme(req.user!.userId);
+    res.status(200).json(doctor);
+});

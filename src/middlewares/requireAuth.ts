@@ -1,33 +1,49 @@
-import {Request, Response, NextFunction} from 'express';
-import { verifyAccessToken } from '../utils/auth';
-import { AppError } from '../utils/appError';
-import { JwtPayload } from 'jsonwebtoken';
-import { Role } from '../constants/roles';
+import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
-export interface AuthRequest extends Request{
-    user?: {
-        userId: string;
-        email: string;
-        role: Role; //TODO: remove this line
-    }
-}
+import { userRepository } from "../repositories/user.repository";
+import { verifyAccessToken } from "../utils/auth";
+import { AppError } from "../utils/appError";
+import type { Role } from "../constants/roles";
 
-// export function requireAuth(req: AuthRequest, res: Response, next: NextFunction){
-export async function requireAuth(req: Request, res: Response, next: NextFunction){
-    const authHeaders = req.headers.authorization;
-    if(!authHeaders || !authHeaders.startsWith('Bearer ')){
-        throw new AppError('Unauthenticated user', 401);
+export async function requireAuth(
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    const authorization = req.headers.authorization;
+
+    if (!authorization?.startsWith("Bearer ")) {
+      throw new AppError("Unauthenticated user", 401);
     }
-    const token = authHeaders.split(' ')[1];
-    
+
+    const token = authorization.slice("Bearer ".length);
+
     if (!token) {
-        throw new AppError('Token missing', 401);
+      throw new AppError("Token missing", 401);
     }
-    try{
-        const payload = await verifyAccessToken(token);
-        req.user = payload as any //{userId: string, email: string};
-        next();
-    }catch{
-        throw new AppError('Invalid or expired token', 401)
+
+    const payload = await verifyAccessToken(token);
+
+    if (!payload.userId || !mongoose.isValidObjectId(payload.userId)) {
+      throw new AppError("Invalid token", 401);
     }
+
+    const user = await userRepository.findAuthIdentityById(payload.userId);
+
+    if (!user) {
+      throw new AppError("User not found", 401);
+    }
+
+    req.user = {
+      userId: user._id.toString(),
+      email: user.email,
+      role: (user.role as Role | undefined) ?? null
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
