@@ -117,22 +117,7 @@ export const appointmentService = {
         }
     },
 
-    async completeAppointment(appointmentId: string, doctorId: string){
-        // const appointment = await appointmentRepository.findById(appointmentId);
-        // if(!appointment){
-        //     throw new AppError('Appointment not found', 404);
-        // }
-
-        // if(appointment.status === 'COMPLETED'){
-        //     throw new AppError('Appointment already completed', 400);
-        // }
-
-        // if(appointment.status === 'CANCELLED'){
-        //     throw new AppError('Cancelled appointment can not be completed', 400);
-        // }
-        
-        // return appointmentRepository.updateStatus(appointmentId, 'COMPLETED');
-
+    async completeAppointment(appointmentId: string, doctorId: string){       
         const appointment = await appointmentRepository.findById(appointmentId);
 
         if (!appointment) {
